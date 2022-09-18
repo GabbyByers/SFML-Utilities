@@ -14,8 +14,8 @@
 
 class Game {
 public:
-    int screenWidth = 800;
-    int screenHeight = 600;
+    int screenWidth = 1600;
+    int screenHeight = 900;
 
     sf::Font CourierPrime_Regular;
 
@@ -25,50 +25,6 @@ public:
     }
 };
 Game game;
-
-class DisplayFPS {
-public:
-    sf::Text text;
-    int historySize = 40;
-    std::vector <double> historicalFPS;
-
-    DisplayFPS() {
-        text.setFont(game.CourierPrime_Regular);
-        text.setCharacterSize(16);
-        text.setFillColor(sf::Color(255, 255, 255));
-        text.setPosition(5, 0);
-    }
-
-    void drawFPS(sf::RenderWindow& window, sf::Clock& clock) {
-        double fpsThisFrame = getFPS(clock);
-        pushAndPop(fpsThisFrame);
-        double fpsRollingAverage = returnRollingAverageFPS();
-        text.setString("FPS: " + std::to_string(int(fpsRollingAverage)));
-        window.draw(text);
-    }
-
-    void pushAndPop(double fps) {
-        historicalFPS.push_back(fps);
-        if (historicalFPS.size() > historySize) {
-            historicalFPS.erase(historicalFPS.begin());
-        }
-    }
-
-    double returnRollingAverageFPS() {
-        double sum = 0;
-        for (double fps : historicalFPS) {
-            sum += fps;
-        }
-        return sum / historicalFPS.size();
-    }
-
-    double getFPS(sf::Clock& clock) {
-        sf::Time timeSinceLastFrame = clock.getElapsedTime();
-        clock.restart();
-        return (1.0 / timeSinceLastFrame.asSeconds());
-    }
-};
-DisplayFPS displayFPS;
 
 class Mouse {
 public:
@@ -119,6 +75,8 @@ public:
     double y = 1.0;
     double w = 1.0;
     double h = 1.0;
+
+
 
     sf::Color color = sf::Color(255, 255, 255);
 
@@ -231,15 +189,47 @@ public:
     }
 };
 
+class widget {
+public:
+    double x = 0.0, y = 0.0;
+    double w = 0.0, h = 0.0;
+
+    widget() {}
+
+
+};
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(game.screenWidth, game.screenHeight), "Hello SFML", sf::Style::Close);
     sf::Clock clock;
 
+    std::vector<int> stupid_vector;
+
+    stupid_vector.push_back(33);
+    stupid_vector.push_back(23);
+    stupid_vector.push_back(55);
+    stupid_vector.push_back(3);
+    stupid_vector.push_back(-10);
+
+    std::cout << &stupid_vector << std::endl;
+
+
+
     std::vector<sf::Vertex> boxes;
     std::vector<sf::Vertex> rectangles;
 
     rect goofy_ahh_rect(rectangles);
+    rect goofy_ahh_rect_(rectangles);
+    rect goofy_ahh_rect__(rectangles);
+    goofy_ahh_rect.setDim(300, 300, 40, 90, rectangles);
+    goofy_ahh_rect.setColor(sf::Color(255, 255, 0), rectangles);
+    goofy_ahh_rect_.setDim(350, 300, 40, 90, rectangles);
+    goofy_ahh_rect_.setColor(sf::Color(0, 255, 255), rectangles);
+    goofy_ahh_rect__.setDim(400, 300, 40, 90, rectangles);
+    goofy_ahh_rect__.setColor(sf::Color(255, 0, 255), rectangles);
+    //goofy_ahh_rect_.invisible(rectangles);
+
 
     box silly_test_box(boxes);
     box silly_test_box_2(boxes);
@@ -261,8 +251,9 @@ int main()
             }
         }
 
+        goofy_ahh_rect_.setDim(350, 300, mouse.x - 350, mouse.y - 300, rectangles);
+
         window.clear(sf::Color(0, 0, 0));
-        displayFPS.drawFPS(window, clock);
         window.draw(&boxes[0], boxes.size(), sf::Lines);
         window.draw(&rectangles[0], rectangles.size(), sf::Quads);
         window.display();
