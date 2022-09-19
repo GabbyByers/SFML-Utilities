@@ -153,10 +153,14 @@ public:
 
     void push(std::vector<sf::Vertex>& rectangles) {
         index = rectangles.size();
-        rectangles.push_back(sf::Vertex(sf::Vector2f(x    , y), color));
+        /*rectangles.push_back(sf::Vertex(sf::Vector2f(x    , y), color));
         rectangles.push_back(sf::Vertex(sf::Vector2f(x + w, y), color));
         rectangles.push_back(sf::Vertex(sf::Vector2f(x + w, y + h), color));
-        rectangles.push_back(sf::Vertex(sf::Vector2f(x    , y + h), color));
+        rectangles.push_back(sf::Vertex(sf::Vector2f(x    , y + h), color));*/
+        rectangles.push_back(sf::Vertex(sf::Vector2f(x, y)));
+        rectangles.push_back(sf::Vertex(sf::Vector2f(x + w, y)));
+        rectangles.push_back(sf::Vertex(sf::Vector2f(x + w, y + h)));
+        rectangles.push_back(sf::Vertex(sf::Vector2f(x, y + h)));
     }
 
     void setColor(sf::Color newColor, std::vector<sf::Vertex>& rectangles) {
@@ -172,6 +176,13 @@ public:
         boxes[index + 1].position = sf::Vector2f(x + w, y);
         boxes[index + 2].position = sf::Vector2f(x + w, y + h);
         boxes[index + 3].position = sf::Vector2f(x    , y + h);
+    }
+
+    void setTextureDim(double x, double y, double w, double h, std::vector<sf::Vertex>& boxes) {
+        boxes[index + 0].texCoords = sf::Vector2f(x, y);
+        boxes[index + 1].texCoords = sf::Vector2f(x + w, y);
+        boxes[index + 2].texCoords = sf::Vector2f(x + w, y + h);
+        boxes[index + 3].texCoords = sf::Vector2f(x, y + h);
     }
 
     void invisible(std::vector<sf::Vertex>& boxes) {
@@ -196,7 +207,6 @@ public:
 
     widget() {}
 
-
 };
 
 int main()
@@ -204,42 +214,45 @@ int main()
     sf::RenderWindow window(sf::VideoMode(game.screenWidth, game.screenHeight), "Hello SFML", sf::Style::Close);
     sf::Clock clock;
 
-    std::vector<int> stupid_vector;
-
-    stupid_vector.push_back(33);
-    stupid_vector.push_back(23);
-    stupid_vector.push_back(55);
-    stupid_vector.push_back(3);
-    stupid_vector.push_back(-10);
-
-    std::cout << &stupid_vector << std::endl;
-
-
-
     std::vector<sf::Vertex> boxes;
     std::vector<sf::Vertex> rectangles;
+    sf::Texture rectTexture;
+    if (!rectTexture.loadFromFile("images/sprites.png")) { std::cout << "nope" << std::endl; }
+    //rectTexture.loadFromFile("images/sprites.png");
 
-    rect goofy_ahh_rect(rectangles);
-    rect goofy_ahh_rect_(rectangles);
-    rect goofy_ahh_rect__(rectangles);
-    goofy_ahh_rect.setDim(300, 300, 40, 90, rectangles);
-    goofy_ahh_rect.setColor(sf::Color(255, 255, 0), rectangles);
-    goofy_ahh_rect_.setDim(350, 300, 40, 90, rectangles);
-    goofy_ahh_rect_.setColor(sf::Color(0, 255, 255), rectangles);
-    goofy_ahh_rect__.setDim(400, 300, 40, 90, rectangles);
-    goofy_ahh_rect__.setColor(sf::Color(255, 0, 255), rectangles);
-    //goofy_ahh_rect_.invisible(rectangles);
+    //rect goofy_ahh_rect(rectangles);
+    //rect goofy_ahh_rect_(rectangles);
+    //rect goofy_ahh_rect__(rectangles);
+    //goofy_ahh_rect.setDim(300, 300, 40, 90, rectangles);
+    //goofy_ahh_rect.setColor(sf::Color(255, 255, 0), rectangles);
+    //goofy_ahh_rect_.setDim(350, 300, 40, 90, rectangles);
+    //goofy_ahh_rect_.setColor(sf::Color(0, 255, 255), rectangles);
+    //goofy_ahh_rect__.setDim(400, 300, 200, 200, rectangles);
+    ////goofy_ahh_rect__.setColor(sf::Color(255, 0, 255), rectangles);
+    //goofy_ahh_rect__.setTextureDim(0, 0, 50, 50, rectangles);
+    ////goofy_ahh_rect_.invisible(rectangles);
 
 
-    box silly_test_box(boxes);
-    box silly_test_box_2(boxes);
-    silly_test_box.setColor(sf::Color(255, 0, 255), boxes);
-    silly_test_box_2.setColor(sf::Color(0, 255, 255), boxes);
-    silly_test_box.setDim(100, 100, 50, 50, boxes);
-    silly_test_box_2.setDim(120, 120, 50, 50, boxes);
+    //box silly_test_box(boxes);
+    //box silly_test_box_2(boxes);
+    //silly_test_box.setColor(sf::Color(255, 0, 255), boxes);
+    //silly_test_box_2.setColor(sf::Color(0, 255, 255), boxes);
+    //silly_test_box.setDim(100, 100, 50, 50, boxes);
+    //silly_test_box_2.setDim(120, 120, 50, 50, boxes);
 
-    silly_test_box.invisible(boxes);
-    silly_test_box.visible(boxes);
+    //silly_test_box.invisible(boxes);
+    //silly_test_box.visible(boxes);
+
+    //rainbow
+    std::vector<box> box_instances;
+    for (int i = 0; i < 255; i++) {
+        box box(boxes);
+        box.setColor(sf::Color(255 - i, 0, i), boxes);
+        box.setDim(i*5.843 + 40, i*3.098 + 40, 30, 30, boxes);
+        box_instances.push_back(box);
+    }
+
+    //box_instances[150].setDim(box_instances[150].x, 100, 60, 60, boxes); instance doesnt actually know its own dimension, should fix
 
     while (window.isOpen()) {
         mouse.setMouseProperties(sf::Mouse::getPosition(window));
@@ -251,11 +264,12 @@ int main()
             }
         }
 
-        goofy_ahh_rect_.setDim(350, 300, mouse.x - 350, mouse.y - 300, rectangles);
+        //goofy_ahh_rect_.setDim(350, 300, 40, mouse.y - 300, rectangles);
+        //goofy_ahh_rect__.setDim(400, 300, mouse.x - 400, 200, rectangles);
 
         window.clear(sf::Color(0, 0, 0));
         window.draw(&boxes[0], boxes.size(), sf::Lines);
-        window.draw(&rectangles[0], rectangles.size(), sf::Quads);
+        //window.draw(&rectangles[0], rectangles.size(), sf::Quads, &rectTexture);
         window.display();
     }
     return 0;
